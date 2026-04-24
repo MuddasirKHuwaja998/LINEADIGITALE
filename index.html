@@ -1,0 +1,805 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta name="description" content="Linea Digitale — AI automation, smart websites, and intelligent systems for businesses ready to grow." />
+  <meta name="theme-color" content="#F3EAE0" />
+  <title>Linea Digitale — We don't just build digital, we make it work for you.</title>
+
+  <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 32 32'%3E%3Crect width='32' height='32' rx='6' fill='%23E9D9C6'/%3E%3Cg fill='%235A1620'%3E%3Cpath d='M16 28c6.627 0 12-5.373 12-12S22.627 4 16 4 4 9.373 4 16s5.373 12 12 12zm-.887-19.184h1.5v6.665h6.665v1.5h-8.165zm-4.47.328h1.5V19.86h10.713v1.5H10.643z'/%3E%3C/g%3E%3C/svg%3E" />
+
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;0,700;1,400;1,500;1,600&family=Inter:wght@300;400;500;600;700&family=Playfair+Display:ital,wght@0,400;0,500;0,600;0,700;0,800;1,400;1,500;1,600&display=swap" rel="stylesheet" />
+
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js" defer></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js" defer></script>
+  <script src="https://unpkg.com/lenis@1.1.13/dist/lenis.min.js" defer></script>
+
+  <link rel="stylesheet" href="style.css" />
+</head>
+<body>
+
+
+  <!-- rotating top nudge — small floating pill that cycles short
+       bilingual CTA prompts (book a call / get a quote) -->
+  <button type="button" class="tnudge" id="topNudge" aria-label="Quick action">
+    <span class="tnudge__icon" id="topNudgeIcon" aria-hidden="true">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M12 2l2.4 5.6L20 8.4l-4 4.2.9 5.4L12 15.8 7.1 18l.9-5.4-4-4.2 5.6-.8z"/></svg>
+    </span>
+    <span class="tnudge__text" id="topNudgeText">Let's talk</span>
+    <span class="tnudge__close" id="topNudgeClose" aria-label="Dismiss" role="button" tabindex="0">×</span>
+  </button>
+
+  <!-- preloader -->
+  <div class="preloader" id="preloader">
+    <div class="preloader__inner">
+      <div class="preloader__mark">
+        <span class="preloader__o">L</span><span class="preloader__z">inea</span><span class="preloader__d">Digitale</span>
+      </div>
+      <div class="preloader__tag" data-i18n="preloader.tag">AI · Web · Automation</div>
+      <div class="preloader__line"><span id="preloaderBar"></span></div>
+      <div class="preloader__meta">
+        <span data-i18n="preloader.meta">We make digital work for you</span>
+        <span id="preloaderPct">0</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- ============ NAVIGATION ============
+       Left: CTA · Center: menu · Right: logo
+  ============================================ -->
+  <header class="nav" id="nav">
+    <div class="nav__inner">
+      <div class="nav__side nav__side--left">
+        <a href="#top" class="nav__brand" aria-label="Linea Digitale — home" data-cursor="hover">
+          <img src="logo.png" alt="Linea Digitale" class="nav__logo" />
+        </a>
+      </div>
+
+      <nav class="nav__links" id="navLinks">
+        <a href="#top"      data-cursor="hover"><span data-i18n="nav.home">Home</span></a>
+        <a href="#about"    data-cursor="hover"><span data-i18n="nav.about">About</span></a>
+        <a href="#services" data-cursor="hover"><span data-i18n="nav.services">Services</span></a>
+        <a href="#work"     data-cursor="hover"><span data-i18n="nav.work">Our Work</span></a>
+        <a href="#why"      data-cursor="hover"><span data-i18n="nav.why">Why Us</span></a>
+        <a href="#process"  data-cursor="hover"><span data-i18n="nav.process">How It Works</span></a>
+      </nav>
+
+      <div class="nav__side nav__side--right">
+        <div class="lang-switch" id="langSwitch" role="group" aria-label="Language">
+          <button type="button" class="lang-switch__btn is-active" data-lang="en" aria-pressed="true">EN</button>
+          <button type="button" class="lang-switch__btn" data-lang="it" aria-pressed="false">IT</button>
+          <span class="lang-switch__pill" aria-hidden="true"></span>
+        </div>
+        <a href="#connect" class="nav__cta" data-cursor="hover" data-quote><span data-i18n="nav.cta">Get A Quote</span><i aria-hidden="true">→</i></a>
+      </div>
+
+      <button class="nav__toggle" id="navToggle" aria-label="Menu" aria-expanded="false">
+        <span></span><span></span>
+      </button>
+    </div>
+  </header>
+
+  <main id="top">
+
+    <!-- ============ HERO ============ -->
+    <section class="c c-hero" id="home">
+      <div class="c-hero__bg" aria-hidden="true">
+        <video class="c-hero__video" autoplay muted loop playsinline>
+          <source src="hero.mp4" type="video/mp4" />
+        </video>
+        <div class="c-hero__veil"></div>
+      </div>
+
+      <div class="c-hero__inner">
+        <div class="c-hero__left">
+          <p class="hero-kicker" data-anim>
+            <span class="dot"></span> <span data-i18n="hero.kicker">AI · Web · Automation Agency</span>
+          </p>
+
+          <h1 class="hero-title">
+            <span class="line"><span data-anim="rise" data-i18n="hero.title.1">We don't just</span></span>
+            <span class="line"><span data-anim="rise" data-i18n-html="hero.title.2">build&nbsp;<em>digital.</em></span></span>
+          </h1>
+
+          <p class="hero-sub" data-anim data-i18n="hero.sub">
+            AI automation, smart websites, and intelligent systems
+            for businesses ready to grow.
+          </p>
+
+          <div class="hero-ctas" data-anim>
+            <a href="https://wa.me/393445217995" target="_blank" rel="noopener" class="btn btn--filled" data-whatsapp><span data-i18n="hero.cta1">Book A Call</span></a>
+            <a href="#services" class="btn btn--ghost"><span data-i18n="hero.cta2">Explore Services</span></a>
+          </div>
+        </div>
+
+        <div class="c-hero__right" data-anim>
+          <!-- Orbit: logo in core, 2 rings with 2 icons each (opposite directions) -->
+          <div class="orbit" aria-hidden="true">
+            <!-- inner ring: circular progress-ring + donut-chart (clockwise) -->
+            <div class="orbit__ring orbit__ring--inner">
+              <!-- Progress ring (75%) -->
+              <span class="orbit__planet">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                  <circle cx="12" cy="12" r="9" opacity=".25"/>
+                  <path d="M12 3 a9 9 0 0 1 6.36 15.36" stroke-linecap="round"/>
+                  <circle cx="12" cy="12" r="2.3" fill="currentColor" stroke="none"/>
+                </svg>
+              </span>
+              <!-- Donut chart / pie slice -->
+              <span class="orbit__planet">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6">
+                  <circle cx="12" cy="12" r="9"/>
+                  <path d="M12 3 V12 L20.5 14.5" stroke-linecap="round" stroke-width="2"/>
+                </svg>
+              </span>
+            </div>
+            <!-- outer ring: globe-network + gauge/radar (anti-clockwise) -->
+            <div class="orbit__ring orbit__ring--outer">
+              <!-- Globe / data network -->
+              <span class="orbit__planet">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+                  <circle cx="12" cy="12" r="9"/>
+                  <ellipse cx="12" cy="12" rx="4" ry="9"/>
+                  <path d="M3 12h18"/>
+                </svg>
+              </span>
+              <!-- Radar / concentric data rings with dot -->
+              <span class="orbit__planet">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+                  <circle cx="12" cy="12" r="9"/>
+                  <circle cx="12" cy="12" r="5.5" opacity=".55"/>
+                  <circle cx="12" cy="12" r="2" opacity=".35"/>
+                  <circle cx="12" cy="12" r="1" fill="currentColor" stroke="none"/>
+                </svg>
+              </span>
+            </div>
+            <div class="orbit__core">
+              <img src="logo.png" alt="" class="orbit__logo"/>
+            </div>
+          </div>
+
+          <div class="hero-foot">
+            <div class="hero-foot__metric">
+              <strong><span class="count" data-count="24">0</span><span>/7</span></strong>
+              <em data-i18n="hero.m1">AI uptime</em>
+            </div>
+            <div class="divider"></div>
+            <div class="hero-foot__metric">
+              <strong><span class="count" data-count="100">0</span><span>%</span></strong>
+              <em data-i18n="hero.m2">AI-native</em>
+            </div>
+            <div class="divider"></div>
+            <div class="hero-foot__metric">
+              <strong><span class="count" data-count="3">0</span><span>x</span></strong>
+              <em data-i18n="hero.m3">Faster</em>
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </section>
+
+
+    <!-- ============ SERVICES TICKER BELT ============ -->
+    <section class="ticker" aria-label="Our services">
+      <div class="ticker__fade ticker__fade--l" aria-hidden="true"></div>
+      <div class="ticker__fade ticker__fade--r" aria-hidden="true"></div>
+      <div class="ticker__track" id="tickerTrack">
+        <!-- the track contains two identical groups for seamless loop -->
+        <div class="ticker__group">
+          <span class="ticker__item"><em>01</em>Business Website</span>
+          <span class="ticker__sep">✦</span>
+          <span class="ticker__item"><em>02</em>Website + AI Chatbot</span>
+          <span class="ticker__sep">✦</span>
+          <span class="ticker__item"><em>03</em>AI Document Brain</span>
+          <span class="ticker__sep">✦</span>
+          <span class="ticker__item"><em>04</em>AI Customer Assistant</span>
+          <span class="ticker__sep">✦</span>
+          <span class="ticker__item"><em>05</em>AI Internal RAG System</span>
+          <span class="ticker__sep">✦</span>
+          <span class="ticker__item"><em>06</em>Machine Learning &amp; Data Models</span>
+          <span class="ticker__sep">✦</span>
+        </div>
+        <div class="ticker__group" aria-hidden="true">
+          <span class="ticker__item"><em>01</em>Business Website</span>
+          <span class="ticker__sep">✦</span>
+          <span class="ticker__item"><em>02</em>Website + AI Chatbot</span>
+          <span class="ticker__sep">✦</span>
+          <span class="ticker__item"><em>03</em>AI Document Brain</span>
+          <span class="ticker__sep">✦</span>
+          <span class="ticker__item"><em>04</em>AI Customer Assistant</span>
+          <span class="ticker__sep">✦</span>
+          <span class="ticker__item"><em>05</em>AI Internal RAG System</span>
+          <span class="ticker__sep">✦</span>
+          <span class="ticker__item"><em>06</em>Machine Learning &amp; Data Models</span>
+          <span class="ticker__sep">✦</span>
+        </div>
+      </div>
+    </section>
+
+
+    <!-- ============ ABOUT ============ -->
+    <section class="c c-about" id="about">
+      <div class="container about__grid">
+        <div class="about__intro">
+          <p class="eyebrow" data-i18n="about.eyebrow">About Linea Digitale</p>
+          <h2 class="sec-title" data-i18n-html="about.title">
+            We build digital<br/>that <em>works.</em>
+          </h2>
+        </div>
+        <div class="about__body">
+          <button type="button" class="about-cta" id="aboutVideoTrigger" aria-label="Watch our intro video" data-cursor="hover">
+            <span class="about-cta__orb">
+              <video class="about-cta__video" autoplay muted loop playsinline preload="auto">
+                <source src="eye-trigger.mp4" type="video/mp4"/>
+              </video>
+            </span>
+            <span class="about-cta__label" data-i18n="about.watch">Watch intro</span>
+          </button>
+
+          <p class="lead" data-i18n="about.p1">
+            Linea Digitale is a digital agency specializing in AI-powered web solutions for small and medium businesses.
+            We build websites that work, chatbots that answer, and automation systems that save time — so you can focus
+            on running your business.
+          </p>
+          <p data-i18n="about.p2">
+            From first-click to final conversion, every line of code and every trained model is shipped to do one thing:
+            make your business easier to run and easier to grow.
+          </p>
+
+          <div class="about__pillars">
+            <div class="pillar">
+              <div class="pillar__icon">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M2 12s3.5-7 10-7 10 7 10 7-3.5 7-10 7S2 12 2 12z"/><circle cx="12" cy="12" r="3"/></svg>
+              </div>
+              <h3 data-i18n="about.vision.t">Our Vision</h3>
+              <p data-i18n="about.vision.p">Make AI practical — so small and medium businesses get the same leverage that enterprises take for granted.</p>
+            </div>
+            <div class="pillar">
+              <div class="pillar__icon">
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M12 2l3 6 7 1-5 5 1 7-6-3-6 3 1-7-5-5 7-1z"/></svg>
+              </div>
+              <h3 data-i18n="about.values.t">Our Values</h3>
+              <p data-i18n="about.values.p">Clarity. Craft. Automation. We ship things that actually work — and keep working.</p>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+
+    <!-- ============ SERVICES (card grid) ============ -->
+    <section class="c c-services-grid" id="services">
+      <div class="container">
+        <div class="sec-head">
+          <p class="eyebrow" data-i18n="svc.eyebrow">What We Do</p>
+          <h2 class="sec-title" data-i18n-html="svc.title">Six services.<br/><em>One outcome.</em></h2>
+          <p class="sec-sub" data-i18n="svc.sub">Digital that actually works for your business.</p>
+        </div>
+
+        <p class="svc-hint" data-i18n="svc.hint">Hover or tap any card to reveal what's inside.</p>
+        <div class="svc-grid">
+
+          <article class="svc" tabindex="0">
+            <div class="svc__face svc__face--front">
+              <div class="svc__icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><rect x="3" y="4" width="18" height="14" rx="2"/><path d="M3 9h18M8 14h2"/></svg></div>
+              <h3 data-i18n="svc1.t">Business Website</h3>
+              <p data-i18n="svc1.d">Fast, modern, multi-page websites with smooth transitions and mobile-first design. Built to convert visitors into clients.</p>
+              <span class="svc__flip-cue" data-i18n="svc.cue1">Reveal details →</span>
+            </div>
+            <div class="svc__face svc__face--back">
+              <h4 data-i18n="svc.head1">What you get</h4>
+              <ul>
+                <li><em>Multi-page Design</em><span>Home, services, about, contact &amp; more</span></li>
+                <li><em>Mobile-First</em><span>Responsive down to 320px, tested on real devices</span></li>
+                <li><em>Smooth Transitions</em><span>Scroll animations, hover states, page reveals</span></li>
+                <li><em>Conversion Ready</em><span>Clear CTAs, contact forms, WhatsApp integration</span></li>
+              </ul>
+            </div>
+          </article>
+
+          <article class="svc" tabindex="0">
+            <div class="svc__face svc__face--front">
+              <div class="svc__icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><rect x="3" y="5" width="18" height="13" rx="2"/><circle cx="9" cy="11.5" r="1.2"/><circle cx="15" cy="11.5" r="1.2"/><path d="M9 15h6"/></svg></div>
+              <h3 data-i18n="svc2.t">Website + AI Chatbot</h3>
+              <p data-i18n="svc2.d">Everything in a business website, plus a custom AI assistant trained on your business that answers client questions 24/7.</p>
+              <span class="svc__flip-cue" data-i18n="svc.cue2">Reveal details →</span>
+            </div>
+            <div class="svc__face svc__face--back">
+              <h4 data-i18n="svc.head2">What you get</h4>
+              <ul>
+                <li><em>Everything in Tier 1</em><span>Full multi-page website, mobile-first</span></li>
+                <li><em>Custom AI Assistant</em><span>Trained on your services, FAQs &amp; pricing</span></li>
+                <li><em>24/7 Answers</em><span>Clients served even when you're offline</span></li>
+                <li><em>Lead Capture</em><span>Chat hands off hot leads to your inbox</span></li>
+              </ul>
+            </div>
+          </article>
+
+          <article class="svc" tabindex="0">
+            <div class="svc__face svc__face--front">
+              <div class="svc__icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><path d="M14 2v6h6M9 13h6M9 17h6M9 9h2"/></svg></div>
+              <h3 data-i18n="svc3.t">AI Document Brain</h3>
+              <p data-i18n="svc3.d">Upload your invoices, contracts, or reports and get clean, structured data automatically. Eliminate manual data entry forever.</p>
+              <span class="svc__flip-cue" data-i18n="svc.cue3">Reveal details →</span>
+            </div>
+            <div class="svc__face svc__face--back">
+              <h4 data-i18n="svc.head3">What you get</h4>
+              <ul>
+                <li><em>Smart Extraction</em><span>Invoices · contracts · reports · forms</span></li>
+                <li><em>Structured Output</em><span>Clean JSON, CSV, or direct to your DB</span></li>
+                <li><em>Zero Manual Entry</em><span>Bulk processing, batched &amp; reviewed</span></li>
+                <li><em>Any Format</em><span>PDF, scanned images, Word, Excel</span></li>
+              </ul>
+            </div>
+          </article>
+
+          <article class="svc" tabindex="0">
+            <div class="svc__face svc__face--front">
+              <div class="svc__icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z"/></svg></div>
+              <h3 data-i18n="svc4.t">AI Customer Assistant</h3>
+              <p data-i18n="svc4.d">A standalone intelligent chatbot for your website or WhatsApp, trained on your products, services, and FAQs.</p>
+              <span class="svc__flip-cue" data-i18n="svc.cue4">Reveal details →</span>
+            </div>
+            <div class="svc__face svc__face--back">
+              <h4 data-i18n="svc.head4">What you get</h4>
+              <ul>
+                <li><em>Trained on Your Biz</em><span>Products, services, FAQs, policies</span></li>
+                <li><em>Web or WhatsApp</em><span>Deploy on site, WA Business, or both</span></li>
+                <li><em>Natural Language</em><span>Understands casual questions in any phrasing</span></li>
+                <li><em>Handoff Built-In</em><span>Transfers to a human when it matters</span></li>
+              </ul>
+            </div>
+          </article>
+
+          <article class="svc" tabindex="0">
+            <div class="svc__face svc__face--front">
+              <div class="svc__icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M4 7h16M4 12h16M4 17h10"/><circle cx="19" cy="17" r="2"/></svg></div>
+              <h3 data-i18n="svc5.t">AI Internal RAG System</h3>
+              <p data-i18n="svc5.d">Your staff can search and query all your internal documents, manuals, and knowledge instantly using natural language.</p>
+              <span class="svc__flip-cue" data-i18n="svc.cue5">Reveal details →</span>
+            </div>
+            <div class="svc__face svc__face--back">
+              <h4 data-i18n="svc.head5">What you get</h4>
+              <ul>
+                <li><em>Private Knowledge Base</em><span>Your docs, manuals, SOPs — indexed</span></li>
+                <li><em>Natural Language Search</em><span>Ask questions like you would a colleague</span></li>
+                <li><em>Cited Answers</em><span>Every answer traces back to the source doc</span></li>
+                <li><em>Role-Based Access</em><span>Staff sees only what they're cleared to</span></li>
+              </ul>
+            </div>
+          </article>
+
+          <article class="svc" tabindex="0">
+            <div class="svc__face svc__face--front">
+              <div class="svc__icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><circle cx="12" cy="12" r="3"/><path d="M12 2v3M12 19v3M2 12h3M19 12h3M5 5l2 2M17 17l2 2M5 19l2-2M17 7l2-2"/></svg></div>
+              <h3 data-i18n="svc6.t">Machine Learning &amp; Data Models</h3>
+              <p data-i18n="svc6.d">Custom ML models for prediction, classification, or automation — deployed with a clean UI interface for your team.</p>
+              <span class="svc__flip-cue" data-i18n="svc.cue6">Reveal details →</span>
+            </div>
+            <div class="svc__face svc__face--back">
+              <h4 data-i18n="svc.head6">What you get</h4>
+              <ul>
+                <li><em>Custom Models</em><span>Prediction · classification · clustering</span></li>
+                <li><em>Trained on Your Data</em><span>Using your historical records &amp; patterns</span></li>
+                <li><em>Clean UI Delivered</em><span>Your team uses it, not a notebook</span></li>
+                <li><em>Deployed &amp; Monitored</em><span>We host, you use — retrained as data grows</span></li>
+              </ul>
+            </div>
+          </article>
+
+        </div>
+      </div>
+    </section>
+
+
+    <!-- ============ OUR WORK / PROJECTS ============ -->
+    <section class="c c-team" id="work">
+      <div class="container">
+        <div class="sec-head">
+          <p class="eyebrow" data-i18n="work.eyebrow">Our Work</p>
+          <h2 class="sec-title" data-i18n-html="work.title">Recent <em>projects.</em><br/>Real outcomes.</h2>
+          <p class="sec-sub work__note" data-i18n-html="work.note">
+            Looking for tailored demos of our <em>RAG systems</em>, <em>custom AI chatbots</em>, or <em>bespoke ML models</em>?
+            Drop a line at <a href="mailto:lineadigitale8@gmail.com">lineadigitale8@gmail.com</a> — we’ll walk you through builds closest to your use case.
+          </p>
+        </div>
+
+        <div class="team-grid">
+
+          <article class="mbr" data-mbr>
+            <div class="mbr__img">
+              <img src="assets/work/web-whatsapp.png" alt="Business website with WhatsApp feature preview" loading="lazy"/>
+              <a class="mbr__demo" href="https://dentista-hzl6.onrender.com" target="_blank" rel="noopener" data-cursor="hover" aria-label="Open demo in new tab">
+                <span class="mbr__demo-pill">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M2 12s3.5-7 10-7 10 7 10 7-3.5 7-10 7S2 12 2 12z"/><circle cx="12" cy="12" r="3"/></svg>
+                  <span data-i18n="work.demo">View demo</span>
+                </span>
+              </a>
+            </div>
+            <div class="mbr__meta">
+              <h3 data-i18n="work.n1">Business Website + WhatsApp</h3>
+              <span data-i18n="work.tag1">Web · WhatsApp integration</span>
+              <p data-i18n="work.b1">Fast, conversion-focused multi-page site with a floating WhatsApp button for direct client enquiries — live and in production.</p>
+            </div>
+          </article>
+
+          <article class="mbr" data-mbr>
+            <div class="mbr__img">
+              <img src="assets/work/web-chatbot.png" alt="Website with AI chatbot preview" loading="lazy"/>
+              <a class="mbr__demo" href="https://maxoto-oto.onrender.com" target="_blank" rel="noopener" data-cursor="hover" aria-label="Open demo in new tab">
+                <span class="mbr__demo-pill">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M2 12s3.5-7 10-7 10 7 10 7-3.5 7-10 7S2 12 2 12z"/><circle cx="12" cy="12" r="3"/></svg>
+                  <span data-i18n="work.demo">View demo</span>
+                </span>
+              </a>
+            </div>
+            <div class="mbr__meta">
+              <h3 data-i18n="work.n2">Website + AI Chatbot</h3>
+              <span data-i18n="work.tag2">Web · Custom AI assistant</span>
+              <p data-i18n="work.b2">Multi-page clinic site with a private AI assistant trained on services and FAQs — answering patient questions 24/7 with a human-handoff path.</p>
+            </div>
+          </article>
+
+          <article class="mbr" data-mbr>
+            <div class="mbr__img">
+              <img src="assets/work/rag.png" alt="AI RAG system interface preview" loading="lazy"/>
+              <span class="mbr__demo is-private" aria-label="Private enterprise deployment">
+                <span class="mbr__demo-pill">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><rect x="4" y="11" width="16" height="10" rx="2"/><path d="M8 11V7a4 4 0 0 1 8 0v4"/></svg>
+                  <span data-i18n="work.private">Enterprise deployment</span>
+                </span>
+              </span>
+            </div>
+            <div class="mbr__meta">
+              <h3 data-i18n="work.n3">Otofarma AI RAG System</h3>
+              <span data-i18n="work.tag3">AI · Private RAG pipeline</span>
+              <p data-i18n="work.b3">Internal AI assistant for a pharmaceutical manufacturer. Staff query production documents and reports in natural language — powered by Google Gemini 2.5.</p>
+            </div>
+          </article>
+
+        </div>
+      </div>
+    </section>
+
+
+    <!-- ============ WHY US ============ -->
+    <section class="c c-why" id="why">
+      <div class="container">
+        <div class="sec-head">
+          <p class="eyebrow" data-i18n="why.eyebrow">Why Linea Digitale</p>
+          <h2 class="sec-title" data-i18n-html="why.title">AI-native. Human-built.<br/><em>Ruthlessly practical.</em></h2>
+          <p class="sec-sub" data-i18n="why.sub">Six reasons SMBs choose us over big agencies.</p>
+        </div>
+
+        <div class="why-grid">
+          <article class="why-card"><div class="why-card__num">01</div><h3 data-i18n="why.t1">AI Built-In, Not Bolted On</h3><p data-i18n="why.d1">Every site, every tool, every system is designed with automation in mind from day one — not retrofitted afterwards.</p></article>
+          <article class="why-card"><div class="why-card__num">02</div><h3 data-i18n="why.t2">Real Ownership</h3><p data-i18n="why.d2">You own the code, the models, the data. No vendor lock-in, no mystery hosting, no surprise price hikes.</p></article>
+          <article class="why-card"><div class="why-card__num">03</div><h3 data-i18n="why.t3">Tailored to Your Business</h3><p data-i18n="why.d3">We don't resell templates. Every project is scoped to your industry, your clients, and the work you actually do.</p></article>
+          <article class="why-card"><div class="why-card__num">04</div><h3 data-i18n="why.t4">Ship, Then Improve</h3><p data-i18n="why.d4">Weeks, not quarters. We get a working version live fast, then iterate with you based on real usage.</p></article>
+          <article class="why-card"><div class="why-card__num">05</div><h3 data-i18n="why.t5">One Partner, Full Stack</h3><p data-i18n="why.d5">Website, chatbot, document AI, ML models — all from one team. No handoffs, no integration gaps.</p></article>
+          <article class="why-card"><div class="why-card__num">06</div><h3 data-i18n="why.t6">SMB-Sized Budgets</h3><p data-i18n="why.d6">Enterprise-grade tech, priced for small and medium businesses. Transparent quotes, no surprise add-ons.</p></article>
+        </div>
+      </div>
+    </section>
+
+
+    <!-- ============ PROCESS ============ -->
+    <section class="c c-process" id="process">
+      <div class="prc-inner">
+        <div class="sec-head">
+          <p class="eyebrow" data-i18n="prc.eyebrow">How It Works</p>
+          <h2 class="sec-title" data-i18n-html="prc.title">Four moves.<br/><em>No templates.</em></h2>
+        </div>
+
+        <p class="svc-hint" data-i18n="prc.hint">Tap the + on any step to see what's inside.</p>
+        <ol class="prc-list">
+          <li class="prc-step">
+            <span class="prc-step__num">01</span>
+            <div class="prc-step__body">
+              <h3 data-i18n="prc.s1.t">Discovery &amp; Scope</h3>
+              <p data-i18n="prc.s1.d">We learn your business, your clients, and where automation will actually save you time.</p>
+              <div class="prc-step__detail" aria-hidden="true">
+                <ul>
+                  <li data-i18n="prc.s1.l1">60-minute call with the founder / operations lead to map your daily workflow</li>
+                  <li data-i18n="prc.s1.l2">Clear scope document: what we build, what you own, what it costs</li>
+                  <li data-i18n="prc.s1.l3">Timeline agreed upfront — weeks, not quarters</li>
+                </ul>
+              </div>
+            </div>
+            <button class="prc-step__toggle" type="button" aria-expanded="false" aria-label="Expand step details">
+              <span></span><span></span>
+            </button>
+          </li>
+
+          <li class="prc-step">
+            <span class="prc-step__num">02</span>
+            <div class="prc-step__body">
+              <h3 data-i18n="prc.s2.t">Design &amp; Training</h3>
+              <p data-i18n="prc.s2.d">We build the UI, prepare your data, and train the AI on your actual business content.</p>
+              <div class="prc-step__detail" aria-hidden="true">
+                <ul>
+                  <li data-i18n="prc.s2.l1">Design mockups shared for approval before any coding starts</li>
+                  <li data-i18n="prc.s2.l2">We gather your documents, FAQs, and product info for training</li>
+                  <li data-i18n="prc.s2.l3">Models fine-tuned on your content — not generic internet data</li>
+                </ul>
+              </div>
+            </div>
+            <button class="prc-step__toggle" type="button" aria-expanded="false" aria-label="Expand step details">
+              <span></span><span></span>
+            </button>
+          </li>
+
+          <li class="prc-step">
+            <span class="prc-step__num">03</span>
+            <div class="prc-step__body">
+              <h3 data-i18n="prc.s3.t">Launch &amp; Integrate</h3>
+              <p data-i18n="prc.s3.d">We ship it live, connect it to your existing tools, and train your team to use it.</p>
+              <div class="prc-step__detail" aria-hidden="true">
+                <ul>
+                  <li data-i18n="prc.s3.l1">Deployed on your domain or ours — you decide</li>
+                  <li data-i18n="prc.s3.l2">Connected to WhatsApp, email, CRM, or whatever tools you already use</li>
+                  <li data-i18n="prc.s3.l3">Team walkthrough + written handover so nothing is a black box</li>
+                </ul>
+              </div>
+            </div>
+            <button class="prc-step__toggle" type="button" aria-expanded="false" aria-label="Expand step details">
+              <span></span><span></span>
+            </button>
+          </li>
+
+          <li class="prc-step">
+            <span class="prc-step__num">04</span>
+            <div class="prc-step__body">
+              <h3 data-i18n="prc.s4.t">Support &amp; Improve</h3>
+              <p data-i18n="prc.s4.d">We watch how it performs in the real world and refine the model and UI based on real usage.</p>
+              <div class="prc-step__detail" aria-hidden="true">
+                <ul>
+                  <li data-i18n="prc.s4.l1">Monthly check-ins to review usage, errors, and user feedback</li>
+                  <li data-i18n="prc.s4.l2">Model retraining as your content grows and your business evolves</li>
+                  <li data-i18n="prc.s4.l3">Direct line to us — no tickets, no bots, just WhatsApp or email</li>
+                </ul>
+              </div>
+            </div>
+            <button class="prc-step__toggle" type="button" aria-expanded="false" aria-label="Expand step details">
+              <span></span><span></span>
+            </button>
+          </li>
+        </ol>
+      </div>
+    </section>
+
+
+    <!-- ============ CONNECT / CTA ============ -->
+    <section class="c c-connect" id="connect">
+      <div class="cn-inner">
+        <p class="eyebrow" data-i18n="cn.eyebrow">Let's Talk</p>
+        <h2 class="cn-title" data-i18n-html="cn.title">Your next <em>smart</em> workflow<br/>is one call away.</h2>
+        <p class="cn-sub" data-i18n="cn.sub">Tell us what's slowing you down. We'll show you the fastest way to automate it.</p>
+
+        <div class="cn-ctas">
+          <a href="https://wa.me/393445217995" target="_blank" rel="noopener" class="btn btn--filled btn--lg" data-cursor="hover" data-whatsapp><span data-i18n="cn.cta1">Book A Call</span></a>
+          <a href="mailto:lineadigitale8@gmail.com?subject=Project%20inquiry" class="btn btn--ghost btn--lg" data-cursor="hover" data-quote><span data-i18n="cn.cta2">Send a Project Brief</span></a>
+        </div>
+
+        <div class="cn-grid">
+          <div>
+            <h4 data-i18n="cn.emailH">Email</h4>
+            <a href="mailto:lineadigitale8@gmail.com" data-cursor="hover">lineadigitale8@gmail.com</a>
+          </div>
+          <div>
+            <h4 data-i18n="cn.phoneH">Phone</h4>
+            <a href="tel:+393445217995" data-cursor="hover">+39 344 521 7995</a>
+          </div>
+          <div>
+            <h4 data-i18n="cn.hqH">Headquarters</h4>
+            <p>Via Benedetto Brin N.67<br/>Napoli, Italy</p>
+          </div>
+        </div>
+      </div>
+    </section>
+
+
+    <!-- ============ FOOTER ============ -->
+    <footer class="ft">
+      <div class="ft__grid">
+        <div class="ft__col ft__col--brand">
+          <a href="#top" class="ft__brand" data-cursor="hover">
+            <img src="logo.png" alt="Linea Digitale" class="ft__logo"/>
+          </a>
+          <p class="ft__tag" data-i18n-html="ft.tag"><em>We don't just build digital — we make it work for you.</em></p>
+          <p class="ft__about" data-i18n="ft.about">AI-powered web solutions for small and medium businesses. Websites that work, chatbots that answer, automation that saves time.</p>
+        </div>
+
+        <div class="ft__col">
+          <h4 data-i18n="ft.quickH">Quick Access</h4>
+          <ul class="ft__links">
+            <li><a href="#about"    data-cursor="hover" data-i18n="nav.about">About</a></li>
+            <li><a href="#services" data-cursor="hover" data-i18n="nav.services">Services</a></li>
+            <li><a href="#work"     data-cursor="hover" data-i18n="nav.work">Our Work</a></li>
+            <li><a href="#why"      data-cursor="hover" data-i18n="nav.why">Why Us</a></li>
+            <li><a href="#process"  data-cursor="hover" data-i18n="nav.process">How It Works</a></li>
+            <li><a href="#connect"  data-cursor="hover" data-i18n="ft.contact">Contact</a></li>
+          </ul>
+        </div>
+
+        <div class="ft__col">
+          <h4 data-i18n="ft.svcH">Services</h4>
+          <ul class="ft__links">
+            <li><a href="#services" data-cursor="hover" data-i18n="svc1.t">Business Website</a></li>
+            <li><a href="#services" data-cursor="hover" data-i18n="svc2.t">Website + AI Chatbot</a></li>
+            <li><a href="#services" data-cursor="hover" data-i18n="svc3.t">AI Document Brain</a></li>
+            <li><a href="#services" data-cursor="hover" data-i18n="svc4.t">AI Customer Assistant</a></li>
+            <li><a href="#services" data-cursor="hover" data-i18n="svc5.t">AI Internal RAG System</a></li>
+            <li><a href="#services" data-cursor="hover" data-i18n="svc6.t">ML &amp; Data Models</a></li>
+          </ul>
+        </div>
+
+        <div class="ft__col ft__col--map">
+          <h4 data-i18n="ft.visitH">Visit Us</h4>
+          <address class="ft__address">
+            Via Benedetto Brin N.67<br/>
+            Napoli, Italy<br/>
+            <a href="tel:+393445217995" data-cursor="hover">+39 344 521 7995</a><br/>
+            <a href="mailto:lineadigitale8@gmail.com" data-cursor="hover">lineadigitale8@gmail.com</a>
+          </address>
+          <div class="ft__map">
+            <iframe
+              src="https://www.google.com/maps?q=Via+Benedetto+Brin+67+Napoli+Italy&output=embed"
+              loading="lazy"
+              referrerpolicy="no-referrer-when-downgrade"
+              title="Linea Digitale HQ on Google Maps"></iframe>
+          </div>
+        </div>
+      </div>
+
+      <div class="ft__bottom">
+        <span data-i18n="ft.copy">&copy; 2026 Linea Digitale · All rights reserved</span>
+        <span data-i18n="ft.stamp">AI Powered · Web Crafted · Made in Napoli</span>
+      </div>
+    </footer>
+  </main>
+
+  <!-- ============ CHATBOT ============ -->
+  <div class="bot" id="bot">
+    <!-- rotating notification bubble (non-interactive, auto-dismisses) -->
+    <div class="bot__nudge" id="botNudge" aria-hidden="true">
+      <span class="bot__nudge-text" id="botNudgeText">Need help?</span>
+      <button class="bot__nudge-close" id="botNudgeClose" aria-label="Dismiss">×</button>
+    </div>
+
+    <button class="bot__toggle" id="botToggle" aria-label="Open FAQ chatbot">
+      <img src="robot.png" alt="" class="bot__icon" />
+      <span class="bot__pulse" aria-hidden="true"></span>
+    </button>
+
+    <div class="bot__panel" id="botPanel" role="dialog" aria-hidden="true">
+      <div class="bot__header">
+        <div class="bot__avatar"><img src="robot.png" alt=""/></div>
+        <div>
+          <strong data-i18n="bot.title">Linea Digitale Assistant</strong>
+          <span>
+            <span class="bot__status-text" data-i18n="bot.status">Online · Replies instantly</span>
+            <span class="bot__eq" aria-hidden="true"><i></i><i></i><i></i><i></i></span>
+            <span class="bot__speaking-text" data-i18n="bot.speaking">Speaking…</span>
+          </span>
+        </div>
+        <button class="bot__close" id="botClose" aria-label="Close">×</button>
+      </div>
+      <div class="bot__messages" id="botMessages" aria-live="polite"></div>
+      <div class="bot__quick" id="botQuick"></div>
+      <form class="bot__input" id="botForm" autocomplete="off">
+        <input id="botInput" type="text" placeholder="Type your question — or tap the mic…" aria-label="Type your question" data-i18n-placeholder="bot.placeholder"/>
+        <button type="button" class="bot__mic" id="botMic" aria-label="Speak your question">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><rect x="9" y="3" width="6" height="12" rx="3"/><path d="M5 11a7 7 0 0 0 14 0"/><path d="M12 18v3"/></svg>
+        </button>
+        <button type="submit" aria-label="Send">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 11l18-8-8 18-2-8-8-2z"/></svg>
+        </button>
+      </form>
+      <div class="bot__footer" data-i18n="bot.footer">Powered by Linea Digitale AI</div>
+    </div>
+  </div>
+
+  <!-- ============ QUOTE / BOOKING MODAL ============ -->
+  <div class="qmodal" id="quoteModal" aria-hidden="true" role="dialog" aria-labelledby="quoteTitle">
+    <div class="qmodal__backdrop" id="quoteBackdrop"></div>
+    <div class="qmodal__frame" role="document">
+      <button class="qmodal__close" id="quoteClose" type="button" aria-label="Close quote form">×</button>
+
+      <div class="qmodal__body">
+        <p class="eyebrow" data-i18n="qm.eyebrow">Get a Quote</p>
+        <h2 id="quoteTitle" class="qmodal__title" data-i18n-html="qm.title">
+          Let's start something <em>useful.</em>
+        </h2>
+        <p class="qmodal__sub" data-i18n="qm.sub">
+          Tell us a little about your project — we'll come back within 24 hours.
+        </p>
+
+        <form class="qform" id="quoteForm" novalidate>
+          <div class="qform__row">
+            <label class="qform__field">
+              <span class="qform__label" data-i18n="qm.first">First Name *</span>
+              <input type="text" name="firstName" required autocomplete="given-name" spellcheck="false"/>
+              <span class="qform__err" data-err="firstName"></span>
+            </label>
+            <label class="qform__field">
+              <span class="qform__label" data-i18n="qm.last">Last Name *</span>
+              <input type="text" name="lastName" required autocomplete="family-name" spellcheck="false"/>
+              <span class="qform__err" data-err="lastName"></span>
+            </label>
+          </div>
+
+          <div class="qform__row">
+            <label class="qform__field">
+              <span class="qform__label" data-i18n="qm.email">Email *</span>
+              <input type="email" name="email" required autocomplete="email" spellcheck="false"/>
+              <span class="qform__err" data-err="email"></span>
+            </label>
+            <label class="qform__field">
+              <span class="qform__label" data-i18n-html="qm.phone">Phone <em>(optional)</em></span>
+              <input type="tel" name="phone" autocomplete="tel" spellcheck="false"/>
+            </label>
+          </div>
+
+          <label class="qform__field">
+            <span class="qform__label" data-i18n="qm.service">Service *</span>
+            <div class="qform__select">
+              <select name="service" required>
+                <option value="" disabled selected data-i18n="qm.svc.pick">Choose a service…</option>
+                <option value="Business Website" data-i18n="qm.svc.1">Business Website</option>
+                <option value="Website + AI Chatbot" data-i18n="qm.svc.2">Website + AI Chatbot</option>
+                <option value="AI Document Brain" data-i18n="qm.svc.3">AI Document Brain</option>
+                <option value="AI Customer Assistant" data-i18n="qm.svc.4">AI Customer Assistant</option>
+                <option value="AI Internal RAG System" data-i18n="qm.svc.5">AI Internal RAG System</option>
+                <option value="Machine Learning Models" data-i18n="qm.svc.6">Machine Learning Models</option>
+                <option value="Other" data-i18n="qm.svc.other">Other</option>
+              </select>
+              <svg class="qform__caret" viewBox="0 0 12 8" aria-hidden="true"><path d="M1 1l5 5 5-5" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            </div>
+            <span class="qform__err" data-err="service"></span>
+          </label>
+
+          <label class="qform__field">
+            <span class="qform__label" data-i18n-html="qm.details">Optional Details <em>(max 200 characters)</em></span>
+            <textarea name="details" maxlength="200" rows="4" data-i18n-placeholder="qm.details.ph" placeholder="A line or two about your goal, timeline, or budget…"></textarea>
+            <span class="qform__count"><span id="quoteCharCount">0</span>/200</span>
+          </label>
+
+          <span class="qform__err qform__err--global" id="quoteGlobalErr" aria-live="polite"></span>
+
+          <button type="submit" class="qform__submit" id="quoteSubmit">
+            <span class="qform__submit-text" data-i18n="qm.send">Send Request</span>
+            <span class="qform__submit-loader" aria-hidden="true"></span>
+          </button>
+        </form>
+
+        <div class="qform__success" id="quoteSuccess" aria-hidden="true">
+          <div class="qform__success-icon" aria-hidden="true">
+            <svg viewBox="0 0 52 52" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="26" cy="26" r="23"/><path d="M16 27l7 7 14-15"/></svg>
+          </div>
+          <h3 data-i18n="qm.ok.t">Thanks!</h3>
+          <p data-i18n="qm.ok.p">We'll be in touch within 24 hours.</p>
+          <button type="button" class="qform__ok-close" id="quoteSuccessClose" data-i18n="qm.ok.close">Close</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ============ VIDEO MODAL ============ -->
+  <div class="vmodal" id="videoModal" aria-hidden="true" role="dialog" aria-label="Intro video">
+    <div class="vmodal__backdrop" id="videoModalBackdrop"></div>
+    <div class="vmodal__frame">
+      <button class="vmodal__close" id="videoModalClose" aria-label="Close video">×</button>
+      <video class="vmodal__video" id="videoModalVideo" playsinline controls preload="none">
+        <source src="about-video.mp4" type="video/mp4"/>
+      </video>
+    </div>
+  </div>
+
+  <script src="script.js" defer></script>
+</body>
+</html>
