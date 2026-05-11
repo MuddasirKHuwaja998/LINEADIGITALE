@@ -235,7 +235,7 @@
 
     // Refresh bot quick chips + placeholder + TTS voice
     if (typeof buildQuickChips === 'function') buildQuickChips();
-    if (typeof loadVoices === 'function') loadVoices();
+    if (typeof loadVoices === 'function') loadVoices(lang);
   };
 
   // Wire language toggle
@@ -964,10 +964,10 @@
   let ttsVoices = [];
   let chosenVoice = null;
 
-  const loadVoices = () => {
+  const loadVoices = (forceLang) => {
     if (!window.speechSynthesis) return;
     ttsVoices = window.speechSynthesis.getVoices() || [];
-    const wantLang = currentLang === 'it' ? 'it' : 'en';
+    const wantLang = (forceLang || currentLang) === 'it' ? 'it' : 'en';
     const prefsEN = ['Samantha','Microsoft Zira','Google UK English Female','Karen','Serena','Victoria','Tessa','Moira','Microsoft Aria'];
     const prefsIT = ['Alice','Elsa','Federica','Paola','Luca','Microsoft Elsa','Google italiano'];
     const prefs = wantLang === 'it' ? prefsIT : prefsEN;
@@ -1035,7 +1035,7 @@
     // Chrome drops utterances that are speak()'d in the same tick as
     // cancel(). A short defer lets cancel() settle cleanly before we
     // queue the new one.
-    setTimeout(() => {
+    const doSpeak = (attempt) => {
       try {
         const utter = new SpeechSynthesisUtterance(cleaned);
         if (chosenVoice) utter.voice = chosenVoice;
@@ -1044,29 +1044,44 @@
         utter.pitch  = 1.02;
         utter.volume = 1.0;
 
-        // Chrome pauses speechSynthesis after ~15s unless nudged.
         let keepAlive;
         const clearKeepAlive = () => { if (keepAlive) { clearInterval(keepAlive); keepAlive = null; } };
+        let started = false;
 
         utter.onstart = () => {
+          started = true;
           setSpeakingState(true);
           clearKeepAlive();
           keepAlive = setInterval(() => {
-            if (synth.speaking && !synth.paused) {
-              synth.pause();
-              synth.resume();
-            }
+            if (synth.speaking && !synth.paused) { synth.pause(); synth.resume(); }
           }, 12000);
         };
         utter.onend    = () => { clearKeepAlive(); setSpeakingState(false); };
-        utter.onerror  = () => { clearKeepAlive(); setSpeakingState(false); };
+        utter.onerror  = (ev) => {
+          clearKeepAlive(); setSpeakingState(false);
+          // 'interrupted' means cancel() fired — not a real error, ignore
+          if (ev.error === 'interrupted' || ev.error === 'canceled') return;
+          // Retry once on Chrome's silent-drop bug
+          if (attempt < 2 && !started) setTimeout(() => doSpeak(attempt + 1), 180);
+        };
         utter.oncancel = () => { clearKeepAlive(); setSpeakingState(false); };
 
         synth.speak(utter);
+
+        // Chrome desktop sometimes queues but never fires onstart —
+        // detect that and retry once after 900ms
+        setTimeout(() => {
+          if (!started && synth.pending) {
+            clearKeepAlive();
+            try { synth.cancel(); } catch (_) {}
+            if (attempt < 2) setTimeout(() => doSpeak(attempt + 1), 180);
+          }
+        }, 900);
       } catch (_) {
         setSpeakingState(false);
       }
-    }, 80);
+    };
+    setTimeout(() => doSpeak(1), 80);
   };
 
   const stopSpeaking = () => {
