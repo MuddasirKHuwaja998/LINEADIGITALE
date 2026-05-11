@@ -964,31 +964,33 @@
   let ttsVoices = [];
   let chosenVoice = null;
 
-  const loadVoices = (forceLang) => {
-    if (!window.speechSynthesis) return;
-    ttsVoices = window.speechSynthesis.getVoices() || [];
-    const wantLang = (forceLang || currentLang) === 'it' ? 'it' : 'en';
+  const pickVoice = (wantLang) => {
+    const voices = window.speechSynthesis.getVoices() || [];
+    if (!voices.length) return null;
     const prefsEN = ['Samantha','Microsoft Zira','Google UK English Female','Karen','Serena','Victoria','Tessa','Moira','Microsoft Aria'];
     const prefsIT = ['Alice','Elsa','Federica','Paola','Luca','Microsoft Elsa','Google italiano'];
     const prefs = wantLang === 'it' ? prefsIT : prefsEN;
-
-    chosenVoice = null;
     for (const name of prefs) {
-      const v = ttsVoices.find((vv) => vv.name && vv.name.toLowerCase().includes(name.toLowerCase()));
-      if (v) { chosenVoice = v; break; }
+      const v = voices.find((vv) => vv.name && vv.name.toLowerCase().includes(name.toLowerCase()));
+      if (v) return v;
     }
-    if (!chosenVoice) {
-      chosenVoice =
-        ttsVoices.find((v) => v.lang && v.lang.toLowerCase().startsWith(wantLang) && /female|zira|samantha|alice|elsa|karen|serena/i.test(v.name || '')) ||
-        ttsVoices.find((v) => v.lang && v.lang.toLowerCase().startsWith(wantLang)) ||
-        ttsVoices[0] || null;
-    }
+    return (
+      voices.find((v) => v.lang && v.lang.toLowerCase().startsWith(wantLang) && /female|zira|samantha|alice|elsa|karen|serena/i.test(v.name || '')) ||
+      voices.find((v) => v.lang && v.lang.toLowerCase().startsWith(wantLang)) ||
+      voices[0] || null
+    );
+  };
+
+  const loadVoices = (forceLang) => {
+    if (!window.speechSynthesis) return;
+    ttsVoices = window.speechSynthesis.getVoices() || [];
+    const wantLang = ((forceLang !== undefined ? forceLang : currentLang) === 'it') ? 'it' : 'en';
+    chosenVoice = pickVoice(wantLang);
   };
 
   if (window.speechSynthesis) {
     loadVoices();
-    // Chrome fires this async; Safari populates immediately but doesn't fire it.
-    window.speechSynthesis.onvoiceschanged = loadVoices;
+    window.speechSynthesis.onvoiceschanged = () => loadVoices();
   }
 
   // Strip URLs, markdown marks, and over-long whitespace — nicer aloud.
@@ -1025,8 +1027,9 @@
     const cleaned = sanitizeForSpeech(text);
     if (!cleaned) return;
 
-    // Voices may not have loaded yet on first open — force a reload
-    if (!chosenVoice) loadVoices();
+    // Always pick voice fresh at speak-time using current language
+    const wantLang = currentLang === 'it' ? 'it' : 'en';
+    const voiceToUse = pickVoice(wantLang) || chosenVoice;
 
     // Stop anything currently queued/speaking
     try { synth.cancel(); } catch (_) {}
@@ -1038,8 +1041,8 @@
     const doSpeak = (attempt) => {
       try {
         const utter = new SpeechSynthesisUtterance(cleaned);
-        if (chosenVoice) utter.voice = chosenVoice;
-        utter.lang   = (chosenVoice && chosenVoice.lang) || (currentLang === 'it' ? 'it-IT' : 'en-US');
+        if (voiceToUse) utter.voice = voiceToUse;
+        utter.lang = (voiceToUse && voiceToUse.lang) || (currentLang === 'it' ? 'it-IT' : 'en-US');
         utter.rate   = 1.0;
         utter.pitch  = 1.02;
         utter.volume = 1.0;
